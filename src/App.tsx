@@ -35,7 +35,7 @@ function App() {
 
   return (
     <div className="text-center p-10 bg-gradient-to-r from-purple-400 to-pink-500 min-h-screen text-white">
-      <h1 className="text-4xl font-bold mb-4">🎮 Rock Paper Scissors 🎮</h1>
+      <h1 className="text-4xl font-bold mb-4">🎮 Rock Paper Scissors game🎮</h1>
       <p className="text-xl mb-6">Coins: {coins}</p>
 
       <div className="flex justify-center gap-6 mb-8">
