@@ -1,19 +1,95 @@
-.neon {
-  text-shadow: 0 0 10px #fff,
-               0 0 20px #f0f,
-               0 0 40px #0ff;
+/* General App Styles */
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff6a6a, #8a63d2);
+  font-family: Arial, sans-serif;
 }
 
-@keyframes gradient-x {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+.card {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.animate-gradient-x {
-  background-size: 200% 200%;
-  animation: gradient-x 6s ease infinite;
+h1 {
+  margin-bottom: 1rem;
+}
+
+/* Coin counter */
+.coins {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+/* Rock Paper Scissors main buttons (BIG, no background) */
+.emoji-btn {
+  font-size: 4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0 10px;
+  transition: transform 0.2s;
+}
+
+.emoji-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Player & Computer choice emojis (slightly smaller) */
+.choice-emoji {
+  font-size: 3rem;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+/* Layout for choices */
+.choices {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.choice-box {
+  margin: 0 2rem;
+  text-align: center;
+}
+
+/* Labels "You" & "Computer" */
+.choice-label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* Highlighted Result Styles */
+.result-box {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.win {
+  background: #4caf50;
+  color: white;
+}
+
+.lose {
+  background: #e53935;
+  color: white;
+}
+
+.draw {
+  background: #2196f3;
+  color: white;
 }

@@ -1,100 +1,113 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import "./App.css";
+import winSound from "./assets/win.mp3";
+import loseSound from "./assets/lose.mp3";
+import drawSound from "./assets/draw.mp3";
+import Confetti from "react-confetti";
 
-// Rock Paper Scissors images
 const choices = [
-  { name: "Rock", img: "https://i.ibb.co/wybpDgR/rock.png" },
-  { name: "Paper", img: "https://i.ibb.co/zN4H9mL/paper.png" },
-  { name: "Scissors", img: "https://i.ibb.co/CBc1Hmq/scissors.png" },
+  { name: "rock", emoji: "✊" },
+  { name: "paper", emoji: "✋" },
+  { name: "scissors", emoji: "✌️" },
 ];
 
-// Sounds
-const winSound = new Audio(
-  "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
-);
-const loseSound = new Audio(
-  "https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"
-);
-const drawSound = new Audio(
-  "https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"
-);
-
-export default function App() {
+function App() {
   const [playerChoice, setPlayerChoice] = useState<string | null>(null);
-  const [cpuChoice, setCpuChoice] = useState<string | null>(null);
+  const [computerChoice, setComputerChoice] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [coins, setCoins] = useState(100);
+  const [showConfetti, setShowConfetti] = useState(false);
 
-  const playGame = (choice: string) => {
-    setPlayerChoice(choice);
-
+  const play = (choice: string) => {
     const randomChoice =
       choices[Math.floor(Math.random() * choices.length)].name;
-    setCpuChoice(randomChoice);
+
+    setPlayerChoice(choice);
+    setComputerChoice(randomChoice);
 
     if (choice === randomChoice) {
-      setResult("Draw");
-      drawSound.play();
+      setResult("draw");
+      new Audio(drawSound).play();
+      setShowConfetti(false);
     } else if (
-      (choice === "Rock" && randomChoice === "Scissors") ||
-      (choice === "Paper" && randomChoice === "Rock") ||
-      (choice === "Scissors" && randomChoice === "Paper")
+      (choice === "rock" && randomChoice === "scissors") ||
+      (choice === "paper" && randomChoice === "rock") ||
+      (choice === "scissors" && randomChoice === "paper")
     ) {
-      setResult("You Win!");
-      setCoins((c) => c + 10);
-      winSound.play();
+      setResult("win");
+      setCoins(coins + 10);
+      new Audio(winSound).play();
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3000);
     } else {
-      setResult("You Lose!");
-      setCoins((c) => c - 10);
-      loseSound.play();
+      setResult("lose");
+      setCoins(coins - 10);
+      new Audio(loseSound).play();
+      setShowConfetti(false);
     }
   };
 
   return (
-    <div className="animate-gradient flex flex-col items-center justify-center min-h-screen text-white">
-      {/* Header */}
-      <div className="flex justify-between w-full px-8 py-6">
-        <h1 className="text-2xl md:text-3xl font-bold">
-          🎮 Rock Paper Scissors
-        </h1>
-        <div className="bg-yellow-400 text-black px-4 py-2 rounded-lg shadow-lg text-sm">
-          🪙 Coins: {coins}
-        </div>
-      </div>
-
-      {/* Choices */}
-      <div className="flex gap-10 mt-16">
-        {choices.map((choice) => (
-          <motion.button
-            key={choice.name}
-            onClick={() => playGame(choice.name)}
-            whileTap={{ scale: 0.9 }}
-            className="bg-gray-900 hover:bg-gray-700 p-4 rounded-2xl shadow-xl border border-purple-500"
-          >
-            <img src={choice.img} alt={choice.name} className="w-20 h-20" />
-            <p className="mt-2 text-xs">{choice.name}</p>
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Results */}
-      {result && (
-        <div className="mt-16 text-center">
-          <p className="text-sm md:text-lg mb-2">You chose: {playerChoice}</p>
-          <p className="text-sm md:text-lg mb-2">CPU chose: {cpuChoice}</p>
-          <p
-            className={`text-xl md:text-3xl font-bold ${
-              result === "You Win!"
-                ? "text-green-400"
-                : result === "You Lose!"
-                ? "text-red-400"
-                : "text-yellow-400"
-            }`}
-          >
-            {result}
-          </p>
-        </div>
+    <div className="app">
+      {showConfetti && (
+        <Confetti recycle={false} numberOfPieces={300} gravity={0.2} />
       )}
+      <div className="card">
+        <h1>🎮 Rock Paper Scissors 🎮</h1>
+        <p className="coins">Coins: {coins}</p>
+
+        {/* Rock Paper Scissors main buttons */}
+        <div className="buttons">
+          {choices.map((c) => (
+            <button
+              key={c.name}
+              onClick={() => play(c.name)}
+              className="emoji-btn"
+            >
+              {c.emoji}
+            </button>
+          ))}
+        </div>
+
+        {/* Choices (slightly smaller emojis) */}
+        <div className="choices">
+          <div className="choice-box">
+            <p className="choice-label">You</p>
+            {playerChoice && (
+              <span className="choice-emoji">
+                {choices.find((c) => c.name === playerChoice)?.emoji}
+              </span>
+            )}
+          </div>
+          <div className="choice-box">
+            <p className="choice-label">Computer</p>
+            {computerChoice && (
+              <span className="choice-emoji">
+                {choices.find((c) => c.name === computerChoice)?.emoji}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Result */}
+        {result && (
+          <h2
+            className={
+              result === "win"
+                ? "result-box win"
+                : result === "lose"
+                ? "result-box lose"
+                : "result-box draw"
+            }
+          >
+            {result === "win" && "🎉 You Win! 🎉"}
+            {result === "lose" && "😢 You Lose!"}
+            {result === "draw" && "🤝 It's a Draw!"}
+          </h2>
+        )}
+      </div>
     </div>
   );
 }
+
+export default App;
