@@ -1,82 +1,100 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
-const choices = ["rock", "paper", "scissors"];
+// Rock Paper Scissors images
+const choices = [
+  { name: "Rock", img: "https://i.ibb.co/wybpDgR/rock.png" },
+  { name: "Paper", img: "https://i.ibb.co/zN4H9mL/paper.png" },
+  { name: "Scissors", img: "https://i.ibb.co/CBc1Hmq/scissors.png" },
+];
 
-function App() {
+// Sounds
+const winSound = new Audio(
+  "https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
+);
+const loseSound = new Audio(
+  "https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"
+);
+const drawSound = new Audio(
+  "https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"
+);
+
+export default function App() {
   const [playerChoice, setPlayerChoice] = useState<string | null>(null);
-  const [computerChoice, setComputerChoice] = useState<string | null>(null);
-  const [result, setResult] = useState<string>("");
-  const [coins, setCoins] = useState<number>(10);
+  const [cpuChoice, setCpuChoice] = useState<string | null>(null);
+  const [result, setResult] = useState<string | null>(null);
+  const [coins, setCoins] = useState(100);
 
-  const getImagePath = (choice: string | null): string => {
-    if (!choice) return "";
-    return `/${choice}.png`; // ← Load from public folder
-  };
+  const playGame = (choice: string) => {
+    setPlayerChoice(choice);
 
-  const play = (player: string) => {
-    const computer = choices[Math.floor(Math.random() * 3)];
-    setPlayerChoice(player);
-    setComputerChoice(computer);
+    const randomChoice =
+      choices[Math.floor(Math.random() * choices.length)].name;
+    setCpuChoice(randomChoice);
 
-    if (player === computer) {
-      setResult("It's a Draw!");
+    if (choice === randomChoice) {
+      setResult("Draw");
+      drawSound.play();
     } else if (
-      (player === "rock" && computer === "scissors") ||
-      (player === "paper" && computer === "rock") ||
-      (player === "scissors" && computer === "paper")
+      (choice === "Rock" && randomChoice === "Scissors") ||
+      (choice === "Paper" && randomChoice === "Rock") ||
+      (choice === "Scissors" && randomChoice === "Paper")
     ) {
-      setResult("You Win! 🎉");
-      setCoins(coins + 1);
+      setResult("You Win!");
+      setCoins((c) => c + 10);
+      winSound.play();
     } else {
-      setResult("You Lose 😞");
-      setCoins(coins - 1);
+      setResult("You Lose!");
+      setCoins((c) => c - 10);
+      loseSound.play();
     }
   };
 
   return (
-    <div className="text-center p-10 bg-gradient-to-r from-purple-400 to-pink-500 min-h-screen text-white">
-      <h1 className="text-4xl font-bold mb-4">🎮 Rock Paper Scissors game🎮</h1>
-      <p className="text-xl mb-6">Coins: {coins}</p>
+    <div className="animate-gradient flex flex-col items-center justify-center min-h-screen text-white">
+      {/* Header */}
+      <div className="flex justify-between w-full px-8 py-6">
+        <h1 className="text-2xl md:text-3xl font-bold">
+          🎮 Rock Paper Scissors
+        </h1>
+        <div className="bg-yellow-400 text-black px-4 py-2 rounded-lg shadow-lg text-sm">
+          🪙 Coins: {coins}
+        </div>
+      </div>
 
-      <div className="flex justify-center gap-6 mb-8">
+      {/* Choices */}
+      <div className="flex gap-10 mt-16">
         {choices.map((choice) => (
-          <button
-            key={choice}
-            onClick={() => play(choice)}
-            className="bg-white text-purple-600 px-6 py-2 rounded-full shadow-md hover:scale-105 transition"
+          <motion.button
+            key={choice.name}
+            onClick={() => playGame(choice.name)}
+            whileTap={{ scale: 0.9 }}
+            className="bg-gray-900 hover:bg-gray-700 p-4 rounded-2xl shadow-xl border border-purple-500"
           >
-            {choice.charAt(0).toUpperCase() + choice.slice(1)}
-          </button>
+            <img src={choice.img} alt={choice.name} className="w-20 h-20" />
+            <p className="mt-2 text-xs">{choice.name}</p>
+          </motion.button>
         ))}
       </div>
 
-      <div className="flex justify-center items-center gap-10 mb-6">
-        {playerChoice && (
-          <div>
-            <p className="font-semibold mb-2">You</p>
-            <img
-              src={getImagePath(playerChoice)}
-              alt={playerChoice}
-              width={100}
-            />
-          </div>
-        )}
-
-        {computerChoice && (
-          <div>
-            <p className="font-semibold mb-2">Computer</p>
-            <img
-              src={getImagePath(computerChoice)}
-              alt={computerChoice}
-              width={100}
-            />
-          </div>
-        )}
-      </div>
-
-      <h2 className="text-2xl font-bold">{result}</h2>
+      {/* Results */}
+      {result && (
+        <div className="mt-16 text-center">
+          <p className="text-sm md:text-lg mb-2">You chose: {playerChoice}</p>
+          <p className="text-sm md:text-lg mb-2">CPU chose: {cpuChoice}</p>
+          <p
+            className={`text-xl md:text-3xl font-bold ${
+              result === "You Win!"
+                ? "text-green-400"
+                : result === "You Lose!"
+                ? "text-red-400"
+                : "text-yellow-400"
+            }`}
+          >
+            {result}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
-
-export default App;
